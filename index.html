@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hanna Hong | Artist</title>
+    <style>
+        /* Reset and base styles */
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            overflow: hidden;
+            font-family: 'Arial Rounded MT Bold', 'Arial', sans-serif;
+            color: #333;
+        }
+
+        /* Navigation bar */
+        .nav-bar {
+            height: 30px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 100;
+            background: transparent;
+        }
+
+        .nav-item {
+            margin: 0 20px;
+            font-size: 14px;
+            font-weight: 300;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            color: #333;
+            text-decoration: none;
+        }
+
+        /* 新增背景容器 */
+        .background-layer {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('images/background1.png') center top/cover no-repeat;
+            z-index: 0;
+            filter: brightness(1.2) url(#water-effect); /* 亮度提高20% */
+        }
+
+        .main-content {
+            /* 移除背景图和滤镜 */
+            height: calc(100% - 60px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Water ripple effect */
+        .ripple {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background: radial-gradient(
+                circle,
+                rgba(255, 255, 255, 0) 0%,
+                rgba(255, 255, 255, 0.6) 70%
+            );
+            border-radius: 50%;
+            transform: translate(-50%, -50%) scale(0.8);
+            pointer-events: none;
+            animation: ripple-effect 3s ease-out;
+        }
+
+        @keyframes ripple-effect {
+            0% {
+                transform: translate(-50%, -50%) scale(0.8);
+                opacity: 0.6;
+            }
+            50% {
+                opacity: 0.4;
+            }
+            100% {
+                transform: translate(-50%, -50%) scale(5);
+                opacity: 0;
+            }
+        }
+
+        /* Footer */
+        .footer {
+            height: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            padding: 0 20px;
+            box-sizing: border-box;
+            font-size: 12px;
+            background: transparent;
+            z-index: 100;
+        }
+
+        .footer-left {
+            font-weight: 300;
+        }
+
+        .footer-right {
+            font-weight: 300;
+        }
+
+        #ripple-container {
+            position: relative;
+            width: 100%;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* 居中容器样式 */
+        .center-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+            width: 100%;
+            height: 100%;
+            position: relative;
+            z-index: 10;
+            gap: 20px;
+            padding: 0 10px;
+            filter: none !important;
+            margin-top: 100px; /* 新增下移100px */
+        }
+
+        /* 单个元素样式 */
+        .item {
+            margin: 5px;
+            text-align: center;
+            flex: 0 0 auto;
+            min-width: 180px;
+            filter: none !important;
+        }
+
+        .item img {
+            max-width: 160px;
+            max-height: 160px;
+            margin-bottom: 8px;
+            filter: none !important;
+        }
+
+        .item p {
+            font-size: 16px;
+            color: #333;
+            font-weight: 300;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            font-family: 'Arial Narrow', Arial, sans-serif;
+            margin-top: 5px;
+            filter: none !important;
+        }
+
+        /* 图片缩放动画 */
+        .scale-animation {
+            animation: slow-scale 5s infinite ease-in-out;
+            transform-origin: center;
+        }
+
+        @keyframes slow-scale {
+            0%, 100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.1);
+            }
+        }
+
+        .image-item a {
+            display: block;
+            width: 100%;
+            height: 100%;
+        }
+        .image-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* 调整导航菜单位置 */
+        .nav-menu {
+            margin-top: 50px; /* 下移50px */
+        }
+    </style>
+</head>
+<body>
+    <!-- 新增背景层 -->
+    <div class="background-layer"></div>
+
+    <svg xmlns="http://www.w3.org/2000/svg" version="1.1" style="position: absolute;">
+        <defs>
+            <filter id="water-effect" x="0" y="0" width="100%" height="100%">
+                <feTurbulence id="water-turbulence" type="fractalNoise" baseFrequency="0.01 0.01" numOctaves="3" seed="0" />
+                <feDisplacementMap in="SourceGraphic" scale="5" xChannelSelector="R" yChannelSelector="B" />
+            </filter>
+        </defs>
+    </svg>
+
+    <!-- Navigation -->
+    <div class="nav-bar">
+        <a href="#" class="nav-item">Illustration</a>
+        <a href="photograph.html" class="nav-item">Photography</a>
+        <a href="#" class="nav-item">Short Film</a>
+        <a href="#" class="nav-item">Design</a>
+    </div>
+
+    <!-- Main content with ripple effect -->
+    <div class="main-content" id="ripple-container">
+        <!-- 四个居中元素（始终显示） -->
+        <div class="center-container">
+            <div class="item">
+                <a href="Illustration.html">
+                    <img src="images/illustration.png" alt="Illustration" class="scale-animation">
+                </a>
+                <p><a href="Illustration.html" style="text-decoration: none; color: inherit;">ILLUSTRATION</a></p>
+            </div>
+            <div class="item">
+                <a href="photograph.html">
+                    <img src="images/photography.PNG" alt="Photography" class="scale-animation">
+                </a>
+                <p>PHOTOGRAPHY</p>
+            </div>
+            <div class="item">
+                <a href="short-film.html">
+                    <img src="images/short-film.png" alt="Short Film" class="scale-animation">
+                </a>
+                <p><a href="short-film.html" style="text-decoration: none; color: inherit;">SHORT FILM</a></p>
+            </div>
+            <div class="item">
+                <img src="images/design.png" alt="Design" class="scale-animation">
+                <p>DESIGN</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+        <div class="footer-left">©Hanna Hong</div>
+        <div class="footer-right">About Me</div>
+    </div>
+
+    <script>
+        const container = document.getElementById('ripple-container');
+        let ripples = [];
+        let lastRippleTime = 0;
+        const rippleDelay = 150;
+        const maxRipples = 10;
+
+        // 水波纹效果
+        container.addEventListener('mousemove', function(e) {
+            const now = Date.now();
+            if (now - lastRippleTime < rippleDelay) return;
+
+            lastRippleTime = now;
+
+            const ripple = document.createElement('div');
+            ripple.className = 'ripple';
+            ripple.style.left = e.clientX + 'px';
+            ripple.style.top = e.clientY + 'px';
+            this.appendChild(ripple);
+            
+            ripples.push(ripple);
+            
+            if (ripples.length > maxRipples) {
+                const oldestRipple = ripples.shift();
+                oldestRipple.remove();
+            }
+            
+            setTimeout(() => {
+                ripple.remove();
+                ripples = ripples.filter(r => r !== ripple);
+            }, 3000);
+        });
+
+        container.addEventListener('mouseleave', function() {
+            ripples.forEach(ripple => ripple.remove());
+            ripples = [];
+        });
+
+        // 水波动画速度调整（更平滑）
+        let seed = 0;
+        function animateWater() {
+            const turbulence = document.querySelector('#water-turbulence');
+            seed += 0.2; // 减慢变化速度
+            turbulence.setAttribute('seed', seed % 100);
+            requestAnimationFrame(animateWater);
+        }
+        animateWater();
+    </script>
+</body>
+</html> 

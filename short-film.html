@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hanna Hong | Illustration</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" />
+    <style>
+        /* Reset and base styles */
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            overflow: hidden;
+            font-family: 'Arial Rounded MT Bold', 'Arial', sans-serif;
+            color: #333;
+        }
+
+        /* 背景容器 */
+        .background-layer {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('images/background1.png') center top/cover no-repeat;
+            z-index: 0;
+            filter: url(#water-effect);
+        }
+
+        /* 鼠标层容器 */
+        .cursor-layer {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 5;
+        }
+
+        /* 左侧固定导航栏 */
+        .nav-bar {
+            position: fixed;
+            left: -300px;
+            top: 0;
+            width: 300px;
+            height: 100vh;
+            background: rgba(255, 255, 255, 0.3);
+            backdrop-filter: blur(5px);
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end; /* 内容从底部开始排列 */
+            padding-bottom: 100px; /* 底部留白 */
+            box-sizing: border-box;
+            transition: left 0.5s ease-out;
+        }
+
+        /* Logo区域 */
+        .nav-logo {
+            position: absolute;
+            top: 50px;
+            left: 0;
+            width: 100%;
+            height: 100px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* 页面加载后显示导航栏 */
+        body.loaded .nav-bar {
+            left: 0;
+        }
+
+        /* 导航菜单容器 - 纵向排列 */
+        .nav-menu {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px; /* 将间距从10px减小到5px */
+            width: 100%;
+        }
+
+        /* 定义自定义字体 */
+        @font-face {
+            font-family: 'Love is Free';
+            src: url('fonts/Love-is-free-2.ttf') format('truetype');
+            font-weight: normal;
+            font-style: normal;
+        }
+
+        /* 修改导航菜单项样式 */
+        .nav-item {
+            font-family: 'Love is Free', cursive, 'Arial Rounded MT Bold', 'Arial', sans-serif;
+            font-size: 20px;
+            letter-spacing: 1px;
+            color: #333;
+            text-decoration: none;
+            margin: 0;
+            padding: 4px 20px; /* 将上下内边距从8px减小到4px */
+            transition: transform 0.3s ease;
+            line-height: 1.2; /* 添加行高控制，默认是1.2 */
+        }
+
+        /* 悬停效果 */
+        .nav-item:hover {
+            transform: scale(1.1);
+        }
+
+        /* 页脚 */
+        .nav-footer {
+            padding-top: 50px; /* 与菜单间距 */
+            display: flex;
+            flex-direction: column;
+            align-items: center; /* 居中对齐 */
+            gap: 15px;
+        }
+
+        .footer-item {
+            font-size: 12px;
+            font-weight: 300;
+            color: #333;
+            text-decoration: none;
+        }
+
+        /* 右侧可滚动内容区 - 隐藏滚动条 */
+        .content-container {
+            position: fixed;
+            left: 350px;
+            right: 50px;
+            top: 0;
+            bottom: 0;
+            overflow-y: scroll; /* 保持可滚动 */
+            z-index: 10;
+            padding: 20px;
+            -ms-overflow-style: none;  /* IE和Edge */
+            scrollbar-width: none;  /* Firefox */
+            opacity: 1;
+            transition: opacity 0.5s ease, transform 0.5s ease;
+        }
+
+        /* 隐藏滚动条 - Chrome/Safari/Opera */
+        .content-container::-webkit-scrollbar {
+            display: none;
+        }
+
+        /* 三列图片网格布局 */
+        .image-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 50px;
+            padding-right: 20px;
+        }
+
+        .image-item {
+            background: #f5f5f5;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            transition: transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            transform-origin: center center;
+            will-change: transform;
+            position: relative;
+            z-index: 1;
+            height: 400px; /* 固定高度 */
+        }
+
+        .image-item img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+
+        /* 横构图照片 */
+        .image-item.horizontal img {
+            width: 100%;
+            height: auto;
+        }
+
+        /* 竖构图照片 */
+        .image-item.vertical img {
+            width: auto;
+            height: 100%;
+        }
+
+        .image-item:hover {
+            transform: scale(1.05) translateZ(0);
+            z-index: 2;
+        }
+
+        /* 水波纹样式 */
+        .ripple {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background: radial-gradient(
+                circle,
+                rgba(255, 255, 255, 0) 0%,
+                rgba(255, 255, 255, 0.6) 70%
+            );
+            border-radius: 50%;
+            transform: translate(-50%, -50%) scale(0.8);
+            pointer-events: none;
+            animation: ripple-effect 3s ease-out;
+        }
+
+        @keyframes ripple-effect {
+            0% {
+                transform: translate(-50%, -50%) scale(0.8);
+                opacity: 0.6;
+            }
+            50% {
+                opacity: 0.4;
+            }
+            100% {
+                transform: translate(-50%, -50%) scale(5);
+                opacity: 0;
+            }
+        }
+
+        /* 页面过渡动画 */
+        .content-container.page-transition {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        /* 灯箱自定义样式 */
+        .fancybox-slide--image .fancybox-content {
+            animation: fancyboxZoom 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+
+        @keyframes fancyboxZoom {
+            from { transform: scale(0.9); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        /* 优化性能 */
+        .fancybox-content {
+            will-change: transform, opacity;
+        }
+
+        .video-container {
+            width: 100%;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .video-container video {
+            width: 100%;
+            height: auto;
+            display: block;
+            border-radius: 12px;
+        }
+
+        /* 响应式视频容器 */
+        .bilibili-video-container {
+            position: relative;
+            width: 100%;
+            max-width: 800px;
+            margin: 30px auto;
+            padding-bottom: 56.25%; /* 16:9宽高比 */
+            height: 0;
+            overflow: hidden;
+        }
+        
+        .bilibili-video-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        /* 微博视频播放器专用嵌入 */
+        .weibo-video-player {
+            max-width: 800px;
+            margin: 30px auto;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        .weibo-video-player iframe {
+            display: block;
+            border: none;
+        }
+
+        /* 仅添加到short-film.html的样式 */
+        .wechat-video-container {
+            max-width: 800px;
+            margin: 30px auto;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            background: #f5f5f5;
+        }
+        .wechat-video-container iframe {
+            display: block;
+            border: none;
+        }
+        .video-fallback {
+            padding: 15px;
+            text-align: center;
+            font-size: 14px;
+            color: #666;
+        }
+
+        /* 统一视频容器圆角 */
+        .video-container,
+        .bilibili-video-container,
+        .weibo-video-player,
+        .wechat-video-container {
+            border-radius: 12px !important;
+            overflow: hidden;
+        }
+
+        /* 微调内部iframe圆角 */
+        .bilibili-video-container iframe,
+        .weibo-video-player iframe,
+        .wechat-video-container iframe {
+            border-radius: 12px 12px 0 0; /* 顶部圆角，底部直角 */
+        }
+
+        /* 本地视频特殊处理 */
+        .video-container video {
+            border-radius: 12px;
+        }
+    </style>
+</head>
+<body>
+    <!-- 鼠标层容器 -->
+    <div class="cursor-layer"></div>
+
+    <!-- 背景层 -->
+    <div class="background-layer"></div>
+
+    <svg xmlns="http://www.w3.org/2000/svg" version="1.1" style="position: absolute;">
+        <defs>
+            <filter id="water-effect" x="0" y="0" width="100%" height="100%">
+                <feTurbulence id="water-turbulence" type="fractalNoise" baseFrequency="0.01 0.01" numOctaves="3" seed="0" />
+                <feDisplacementMap in="SourceGraphic" scale="5" xChannelSelector="R" yChannelSelector="B" />
+            </filter>
+        </defs>
+    </svg>
+
+    <!-- 左侧固定导航栏 -->
+    <div class="nav-bar">
+        <!-- Logo区域 -->
+        <div class="nav-logo">
+            <img src="images/logo.png" alt="Hanna Hong Logo" style="max-width: 100px; height: auto; filter: invert(1);">
+        </div>
+        
+        <!-- 导航菜单 -->
+        <div class="nav-menu">
+            <a href="Illustration.html" class="nav-item">Illustration</a>
+            <a href="photograph.html" class="nav-item">Photography</a>
+            <a href="#" class="nav-item">Short Film</a>
+            <a href="#" class="nav-item">Design</a>
+        </div>
+
+        <!-- 页脚 -->
+        <div class="nav-footer">
+            <a href="index.html" class="footer-item">Home</a>
+            <a href="#" class="footer-item">About Me</a>
+        </div>
+    </div>
+
+    <!-- 右侧可滚动内容区 -->
+    <div class="content-container">
+        <!-- Bilibili视频嵌入 -->
+        <div class="bilibili-video-container">
+            <iframe 
+                src="https://player.bilibili.com/player.html?bvid=BV1s34y1J7wf&high_quality=1&danmaku=0&autoplay=0" 
+                scrolling="no" 
+                border="0" 
+                frameborder="no" 
+                framespacing="0" 
+                allowfullscreen="true"
+                style="width: 100%; height: 100%; min-height: 400px;">
+            </iframe>
+        </div>
+
+        <!-- 微博视频播放器专用嵌入 -->
+        <div class="weibo-video-player">
+            <iframe 
+                src="https://weibo.com/tv/show/1034:PnwicEiEQ" 
+                frameborder="0" 
+                allowfullscreen
+                style="width:100%;height:100%;min-height:500px;">
+            </iframe>
+        </div>
+
+        <!-- 微信视频嵌入 -->
+        <div class="wechat-video-container">
+            <iframe 
+                src="https://mp.weixin.qq.com/s/U1MCFYV5VETdjVS6kzO0mQ" 
+                frameborder="0"
+                allowfullscreen
+                style="width:100%;height:500px;">
+            </iframe>
+            <div class="video-fallback">
+                如无法播放，请<a href="https://mp.weixin.qq.com/s/U1MCFYV5VETdjVS6kzO0mQ" target="_blank">点击这里</a>前往微信观看
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 页面加载完成后添加loaded类触发动画
+        window.addEventListener('load', function() {
+            document.body.classList.add('loaded');
+        });
+
+        // 鼠标特效
+        document.addEventListener('DOMContentLoaded', function() {
+            const cursorLayer = document.querySelector('.cursor-layer');
+            
+            const rippleDelay = 150;
+            const maxRipples = 10;
+            let ripples = [];
+            let lastRippleTime = 0;
+
+            document.addEventListener('mousemove', function(e) {
+                const now = Date.now();
+                if (now - lastRippleTime < rippleDelay) return;
+
+                lastRippleTime = now;
+
+                const ripple = document.createElement('div');
+                ripple.className = 'ripple';
+                ripple.style.left = e.clientX + 'px';
+                ripple.style.top = e.clientY + 'px';
+                cursorLayer.appendChild(ripple);
+
+                ripples.push(ripple);
+                
+                if (ripples.length > maxRipples) {
+                    const oldestRipple = ripples.shift();
+                    oldestRipple.remove();
+                }
+
+                setTimeout(() => {
+                    ripple.remove();
+                    ripples = ripples.filter(r => r !== ripple);
+                }, 3000);
+            });
+        });
+
+        // 水波动画
+        let seed = 0;
+        function animateWater() {
+            const turbulence = document.querySelector('#water-turbulence');
+            if (turbulence) {
+                seed += 0.2;
+                turbulence.setAttribute('seed', seed % 100);
+                requestAnimationFrame(animateWater);
+            }
+        }
+        animateWater();
+    </script>
+</body>
+</html>
